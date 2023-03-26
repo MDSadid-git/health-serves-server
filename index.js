@@ -21,6 +21,7 @@ async function run() {
     const appointmentServesCollection = client
       .db("healthServes")
       .collection("appointmentserves");
+
     app.get("/appointmentserves", async (req, res) => {
       const query = {};
       const allOptions = await appointmentServesCollection
