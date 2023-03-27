@@ -10,7 +10,6 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.fdmrdur.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -22,13 +21,25 @@ async function run() {
     const appointmentServesCollection = client
       .db("healthServes")
       .collection("appointmentserves");
+    const appointmentBookingCollection = client
+      .db("healthServes")
+      .collection("booking");
 
+    // appointmentServesCollection All Data
     app.get("/appointmentserves", async (req, res) => {
       const query = {};
       const allOptions = await appointmentServesCollection
         .find(query)
         .toArray();
       res.send(allOptions);
+    });
+
+    // booking All Data
+    app.post("/booking", async (req, res) => {
+      const booking = req.body;
+
+      const result = await appointmentBookingCollection.insertOne(booking);
+      res.send(result);
     });
   } finally {
   }
