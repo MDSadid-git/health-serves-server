@@ -27,10 +27,27 @@ async function run() {
 
     // appointmentServesCollection All Data
     app.get("/appointmentserves", async (req, res) => {
+      const date = req.query.date;
       const query = {};
+      const bookingDate = { appointmentDate: date };
       const allOptions = await appointmentServesCollection
         .find(query)
         .toArray();
+      const alreadyBooked = await appointmentBookingCollection
+        .find(bookingDate)
+        .toArray();
+
+      allOptions.map((option) => {
+        const optionBooked = alreadyBooked.filter(
+          (book) => book.treatment === option.name
+        );
+        const slotsBooked = optionBooked.map((book) => book.slot);
+        const remaingSlots = option.slots.filter(
+          (slot) => !slotsBooked.includes(slot)
+        );
+        option.slots = remaingSlots;
+        console.log(date, option.name, remaingSlots.length);
+      });
       res.send(allOptions);
     });
 
