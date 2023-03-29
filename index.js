@@ -46,7 +46,7 @@ async function run() {
           (slot) => !slotsBooked.includes(slot)
         );
         option.slots = remaingSlots;
-        console.log(date, option.name, remaingSlots.length);
+        // console.log(date, option.name, remaingSlots.length);
       });
       res.send(allOptions);
     });
@@ -54,7 +54,19 @@ async function run() {
     // booking All Data
     app.post("/booking", async (req, res) => {
       const booking = req.body;
-
+      console.log(booking);
+      const query = {
+        appointmentDate: booking.appointmentDate,
+        email: booking.email,
+        treatment: booking.treatment,
+      };
+      const alreadyBooked = await appointmentBookingCollection
+        .find(query)
+        .toArray();
+      if (alreadyBooked.length) {
+        const message = `You already have a booking on ${booking.appointmentDate}`;
+        return res.send({ acknowledged: false, message });
+      }
       const result = await appointmentBookingCollection.insertOne(booking);
       res.send(result);
     });
