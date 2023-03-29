@@ -52,6 +52,12 @@ async function run() {
     });
 
     // booking All Data
+    app.get("/booking", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const reslut = await appointmentBookingCollection.find(query).toArray();
+      res.send(reslut);
+    });
     app.post("/booking", async (req, res) => {
       const booking = req.body;
       console.log(booking);
